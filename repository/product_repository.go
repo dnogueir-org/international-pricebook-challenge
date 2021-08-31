@@ -10,6 +10,7 @@ import (
 type ProductRepository interface {
 	Insert(product *models.Product) (*models.Product, error)
 	Find(id string) (*models.Product, error)
+	FindAll() ([]*models.Product, error)
 }
 
 type ProductRepositoryDb struct {
@@ -34,12 +35,21 @@ func (repo ProductRepositoryDb) Insert(product *models.Product) (*models.Product
 func (repo ProductRepositoryDb) Find(id string) (*models.Product, error) {
 
 	var product models.Product
-	repo.Db.Preload("Prices").First(&product, "id = ?", id)
+	repo.Db.Preload("Prices.Currency").First(&product, "id = ?", id)
 
 	if product.ID == "" {
 		return nil, fmt.Errorf("product does not exist")
 	}
 
 	return &product, nil
+
+}
+
+func (repo ProductRepositoryDb) FindAll() ([]*models.Product, error) {
+
+	var products []*models.Product
+	repo.Db.Preload("Prices.Currency").Limit(10).Find(&products)
+
+	return products, nil
 
 }

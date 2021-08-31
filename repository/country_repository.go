@@ -10,6 +10,7 @@ import (
 type CountryRepository interface {
 	Insert(country *models.Country) (*models.Country, error)
 	Find(id string) (*models.Country, error)
+	FindAll() ([]*models.Country, error)
 }
 
 type CountryRepositoryDb struct {
@@ -41,5 +42,14 @@ func (repo CountryRepositoryDb) Find(id string) (*models.Country, error) {
 	}
 
 	return &country, nil
+
+}
+
+func (repo CountryRepositoryDb) FindAll() ([]*models.Country, error) {
+
+	var countries []*models.Country
+	repo.Db.Preload("Currency").Find(&countries)
+
+	return countries, nil
 
 }

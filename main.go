@@ -100,9 +100,18 @@ func main() {
 	*/
 
 	productRepository := repository.NewProductRepository(dbConnection)
-	productService := services.NewProductService(productRepository)
+	priceRepository := repository.NewPriceRepository(dbConnection)
+	currencyRepository := repository.NewCurrencyRepository(dbConnection)
+	countryRepository := repository.NewCountryRepository(dbConnection)
+	productService := services.NewProductService(productRepository, priceRepository, currencyRepository)
+	currencyService := services.NewCurrencyService(currencyRepository)
+	countryService := services.NewCountryService(countryRepository, currencyRepository)
+	priceService := services.NewPriceService(priceRepository, currencyRepository)
 	webServer := server.MakeNewWebserver()
+	webServer.CurrencyService = *currencyService
 	webServer.ProductService = *productService
+	webServer.CountryService = *countryService
+	webServer.PriceService = *priceService
 	fmt.Println("Webserver has been started")
 	webServer.Serve()
 

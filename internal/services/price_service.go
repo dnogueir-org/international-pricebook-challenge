@@ -6,22 +6,35 @@ import (
 )
 
 type PriceService struct {
-	PriceRepository repository.PriceRepository
+	PriceRepository    repository.PriceRepository
+	CurrencyRepository repository.CurrencyRepository
 }
 
-func (ps *PriceService) Insert(price *models.Price) (*models.Price, error) {
+func NewPriceService(priceRepository repository.PriceRepository, currencyRepository repository.CurrencyRepository) *PriceService {
+	return &PriceService{
+		PriceRepository:    priceRepository,
+		CurrencyRepository: currencyRepository,
+	}
+}
 
-	err := price.Validate()
+func (ps *PriceService) Insert(productId string, currencyId string, price float64) (*models.Price, error) {
+
+	currency, err := ps.CurrencyRepository.Find(currencyId)
 	if err != nil {
 		return nil, err
 	}
 
-	price, err = ps.PriceRepository.Insert(price)
+	productPrice, err := models.NewPrice(productId, *currency, price)
 	if err != nil {
 		return nil, err
 	}
 
-	return price, nil
+	productPrice, err = ps.PriceRepository.Insert(productPrice)
+	if err != nil {
+		return nil, err
+	}
+
+	return productPrice, nil
 }
 
 func (ps *PriceService) Find(id string) (*models.Price, error) {

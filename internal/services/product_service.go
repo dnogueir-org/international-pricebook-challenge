@@ -6,14 +6,20 @@ import (
 )
 
 type ProductService struct {
-	ProductRepository repository.ProductRepository
+	ProductRepository  repository.ProductRepository
+	PriceRepository    repository.PriceRepository
+	CurrencyRepository repository.CurrencyRepository
 }
 
-func NewProductService(repository repository.ProductRepository) *ProductService {
-	return &ProductService{ProductRepository: repository}
+func NewProductService(productRepository repository.ProductRepository, priceRepository repository.PriceRepository, currencyRepository repository.CurrencyRepository) *ProductService {
+	return &ProductService{
+		ProductRepository:  productRepository,
+		PriceRepository:    priceRepository,
+		CurrencyRepository: currencyRepository,
+	}
 }
 
-func (ps *ProductService) Insert(name string) (*models.Product, error) {
+func (ps *ProductService) Insert(name string, price float64, currencyId string) (*models.Product, error) {
 	product, err := models.NewProduct(name)
 	if err != nil {
 		return nil, err
@@ -23,6 +29,23 @@ func (ps *ProductService) Insert(name string) (*models.Product, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	currency, err := ps.CurrencyRepository.Find(currencyId)
+	if err != nil {
+		return nil, err
+	}
+
+	productPrice, err := models.NewPrice(product.ID, *currency, price)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = ps.PriceRepository.Insert(productPrice)
+	if err != nil {
+		return nil, err
+	}
+
+	product.Prices = append(product.Prices, *productPrice)
 
 	return product, nil
 }
@@ -35,4 +58,14 @@ func (ps *ProductService) Find(id string) (*models.Product, error) {
 	}
 
 	return product, nil
+}
+
+func (ps *ProductService) FindAll() ([]*models.Product, error) {
+
+	products, err := ps.ProductRepository.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }

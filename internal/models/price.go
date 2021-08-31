@@ -21,12 +21,12 @@ func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
-func NewPrice(value float64, currency Currency, product Product) (*Price, error) {
+func NewPrice(productId string, currency Currency, value float64) (*Price, error) {
 
 	price := &Price{
 		ID:        uuid.NewV4().String(),
 		Value:     value,
-		ProductID: product.ID,
+		ProductID: productId,
 		Currency:  currency,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),

@@ -9,9 +9,13 @@ type CurrencyService struct {
 	CurrencyRepository repository.CurrencyRepository
 }
 
-func (cs *CurrencyService) Insert(currency *models.Currency) (*models.Currency, error) {
+func NewCurrencyService(currencyRepository repository.CurrencyRepository) *CurrencyService {
+	return &CurrencyService{CurrencyRepository: currencyRepository}
+}
 
-	err := currency.Validate()
+func (cs *CurrencyService) Insert(name string, acronym string) (*models.Currency, error) {
+
+	currency, err := models.NewCurrency(name, acronym)
 	if err != nil {
 		return nil, err
 	}
@@ -32,4 +36,14 @@ func (cs *CurrencyService) Find(id string) (*models.Currency, error) {
 	}
 
 	return currency, nil
+}
+
+func (cs *CurrencyService) FindAll() ([]*models.Currency, error) {
+
+	currencies, err := cs.CurrencyRepository.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return currencies, nil
 }

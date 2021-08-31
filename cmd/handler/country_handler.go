@@ -9,37 +9,37 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type ProductRequest struct {
-	Name       string  `json:"name"`
-	Price      float64 `json:"price"`
-	CurrencyId string  `json:"currency_id"`
+type CountryRequest struct {
+	Name         string `json:"name"`
+	Abbreviation string `json:"abbreviation"`
+	CurrencyId   string `json:"currency_id"`
 }
 
-func MakeProductHandlers(r *mux.Router, n *negroni.Negroni, service services.ProductService) {
-	r.Handle("/product/{id}", n.With(
-		negroni.Wrap(getProduct(service)),
+func MakeCountryHandlers(r *mux.Router, n *negroni.Negroni, service services.CountryService) {
+	r.Handle("/country/{id}", n.With(
+		negroni.Wrap(getCountry(service)),
 	)).Methods("GET", "OPTIONS")
 
-	r.Handle("/products", n.With(
-		negroni.Wrap(getProducts(service)),
+	r.Handle("/countries", n.With(
+		negroni.Wrap(getCountries(service)),
 	)).Methods("GET", "OPTIONS")
 
-	r.Handle("/product", n.With(
-		negroni.Wrap(createProduct(service)),
+	r.Handle("/country", n.With(
+		negroni.Wrap(createCountry(service)),
 	)).Methods("POST", "OPTIONS")
 }
 
-func getProduct(service services.ProductService) http.Handler {
+func getCountry(service services.CountryService) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		vars := mux.Vars(r)
 		id := vars["id"]
-		product, err := service.Find(id)
+		country, err := service.Find(id)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		err = json.NewEncoder(w).Encode(product)
+		err = json.NewEncoder(w).Encode(country)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -47,16 +47,16 @@ func getProduct(service services.ProductService) http.Handler {
 	})
 }
 
-func getProducts(service services.ProductService) http.Handler {
+func getCountries(service services.CountryService) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		product, err := service.FindAll()
+		countries, err := service.FindAll()
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		err = json.NewEncoder(w).Encode(product)
+		err = json.NewEncoder(w).Encode(countries)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -64,23 +64,23 @@ func getProducts(service services.ProductService) http.Handler {
 	})
 }
 
-func createProduct(service services.ProductService) http.Handler {
+func createCountry(service services.CountryService) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		var productRequest ProductRequest
-		err := json.NewDecoder(r.Body).Decode(&productRequest)
+		var CountryRequest CountryRequest
+		err := json.NewDecoder(r.Body).Decode(&CountryRequest)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write(jsonError(err.Error()))
 			return
 		}
-		product, err := service.Insert(productRequest.Name, productRequest.Price, productRequest.CurrencyId)
+		currency, err := service.Insert(CountryRequest.Name, CountryRequest.Abbreviation, CountryRequest.CurrencyId)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write(jsonError(err.Error()))
 			return
 		}
-		err = json.NewEncoder(w).Encode(product)
+		err = json.NewEncoder(w).Encode(currency)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write(jsonError(err.Error()))

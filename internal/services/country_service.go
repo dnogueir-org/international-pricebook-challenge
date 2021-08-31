@@ -6,12 +6,25 @@ import (
 )
 
 type CountryService struct {
-	CountryRepository repository.CountryRepository
+	CountryRepository  repository.CountryRepository
+	CurrencyRepository repository.CurrencyRepository
 }
 
-func (cs *CountryService) Insert(country *models.Country) (*models.Country, error) {
+func NewCountryService(countryRepository repository.CountryRepository, currencyRepository repository.CurrencyRepository) *CountryService {
+	return &CountryService{
+		CountryRepository:  countryRepository,
+		CurrencyRepository: currencyRepository,
+	}
+}
 
-	err := country.Validate()
+func (cs *CountryService) Insert(name string, abbreviation string, currencyId string) (*models.Country, error) {
+
+	currency, err := cs.CurrencyRepository.Find(currencyId)
+	if err != nil {
+		return nil, err
+	}
+
+	country, err := models.NewCountry(name, abbreviation, *currency)
 	if err != nil {
 		return nil, err
 	}
@@ -32,4 +45,13 @@ func (cs *CountryService) Find(id string) (*models.Country, error) {
 	}
 
 	return country, nil
+}
+
+func (cs *CountryService) FindAll() ([]*models.Country, error) {
+	countries, err := cs.CountryRepository.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return countries, nil
 }

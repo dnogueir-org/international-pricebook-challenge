@@ -29,6 +29,9 @@ func (w Webserver) Serve() {
 		negroni.NewLogger(),
 	)
 	handler.MakeProductHandlers(r, n, w.ProductService)
+	handler.MakeCurrencyHandlers(r, n, w.CurrencyService)
+	handler.MakeCountryHandlers(r, n, w.CountryService)
+	handler.MakePriceHandlers(r, n, w.PriceService)
 	http.Handle("/", r)
 	server := &http.Server{
 		ReadHeaderTimeout: 10 * time.Second,

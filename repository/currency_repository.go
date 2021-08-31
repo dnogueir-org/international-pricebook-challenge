@@ -10,6 +10,7 @@ import (
 type CurrencyRepository interface {
 	Insert(currency *models.Currency) (*models.Currency, error)
 	Find(id string) (*models.Currency, error)
+	FindAll() ([]*models.Currency, error)
 }
 
 type CurrencyRepositoryDb struct {
@@ -34,12 +35,21 @@ func (repo CurrencyRepositoryDb) Insert(currency *models.Currency) (*models.Curr
 func (repo CurrencyRepositoryDb) Find(id string) (*models.Currency, error) {
 
 	var currency models.Currency
-	repo.Db.First(&currency, "id = ?", id)
+	repo.Db.Preload("Countries").First(&currency, "id = ?", id)
 
 	if currency.ID == "" {
 		return nil, fmt.Errorf("currency does not exist")
 	}
 
 	return &currency, nil
+
+}
+
+func (repo CurrencyRepositoryDb) FindAll() ([]*models.Currency, error) {
+
+	var currencies []*models.Currency
+	repo.Db.Find(&currencies)
+
+	return currencies, nil
 
 }

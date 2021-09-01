@@ -75,7 +75,6 @@ endpoint: http://localhost:9000/currency/{id}
 ```
 GET
 endpoint: http://localhost:9000/currencies
-body: {"name":"Real", "acronym":"BRL"}
 ```
 
 - Creating a country

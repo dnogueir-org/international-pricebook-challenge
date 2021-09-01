@@ -92,6 +92,7 @@ endpoint: http://localhost:9000/country/{id}
 
 - Find all countries
 ```
+GET
 endpoint: http://localhost:9000/countries
 ```
 
@@ -110,6 +111,7 @@ endpoint: http://localhost:9000/product/{id}
 
 - Find all products
 ```
+GET
 endpoint: http://localhost:9000/products
 ```
 

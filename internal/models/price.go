@@ -10,7 +10,7 @@ import (
 type Price struct {
 	ID         string    `json:"id" valid:"uuid" gorm:"type:uuid;primary_key"`
 	Value      float64   `json:"value" valid:"notnull"`
-	ProductID  string    `json:"product_id" valid:"-" gorm:"column:product_id;type:uuid;notnull"`
+	ProductID  string    `json:"product_id" valid:"notnull" gorm:"column:product_id;type:uuid;notnull"`
 	CurrencyID string    `json:"-" valid:"-" gorm:"column:currency_id;type:uuid;notnull"`
 	Currency   Currency  `json:"currency" valid:"-"`
 	CreatedAt  time.Time `json:"created_at" valid:"-"`

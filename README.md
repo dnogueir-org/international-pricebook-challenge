@@ -58,7 +58,7 @@ make tests
 
 There are basically 9 endpoints that can be used to test the application:
 
-- Creating a currency
+- Create a currency
 ```
 POST
 endpoint: http://localhost:9000/currency
@@ -77,7 +77,7 @@ GET
 endpoint: http://localhost:9000/currencies
 ```
 
-- Creating a country
+- Create a country
 ```
 POST
 endpoint: http://localhost:9000/country
@@ -96,7 +96,7 @@ GET
 endpoint: http://localhost:9000/countries
 ```
 
-- Creating a product
+- Create a product
 ```
 POST
 endpoint: http://localhost:9000/product
@@ -115,7 +115,7 @@ GET
 endpoint: http://localhost:9000/products
 ```
 
-- Adding new price to the product
+- Add new price to the product
 ```
 POST
 endpoint: http://localhost:9000/price

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/codegangsta/negroni"
-	"github.com/dnogueir-org/international-pricebook-challenge/cmd/handler"
+	"github.com/dnogueir-org/international-pricebook-challenge/cmd/web/handler"
 	"github.com/dnogueir-org/international-pricebook-challenge/internal/services"
 	"github.com/gorilla/mux"
 )
